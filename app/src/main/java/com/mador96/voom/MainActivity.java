@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i("INFO", "I did something at all");
 
-            String API_URL = "http://open.mapquestapi.com/geocoding/v1/address";
-            String key = "augaAA25cxYUzzXABtyHXE7ddADGNq1F%0A";
+            String API_URL = "http://www.mapquestapi.com/geocoding/v1/address";
+            String key = "augaAA25cxYUzzXABtyHXE7ddADGNq1F";
             String location = "260 Wiltshire Road Wynnewood PA 19096";
 
             try {

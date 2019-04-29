@@ -10,18 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.loopj.android.http.RequestParams;
+import com.mador96.voom.Geolocation.Geolocation;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,14 +28,22 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, passengerAmount);
         passengerDropdown.setAdapter(adapter);
 
-        //testing purposes
-        EditText test = (EditText) findViewById(R.id.originEditText);
-
         Button queryButton = (Button) findViewById(R.id.findRideButton);
         queryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new RetrieveFeedTask().execute();
+
+                //Get address origin from edit text
+                EditText originEditText = (EditText) findViewById(R.id.originEditText);
+                EditText destinationEditText = (EditText) findViewById(R.id.destinationEditText);
+                String origin = originEditText.getText().toString();
+                String destination = destinationEditText.getText().toString();
+
+                final String[] addresses = new String[2];
+                addresses[0] = origin;
+                addresses[1] = destination;
+
+                new RetrieveFeedTask().execute(addresses);
             }
         });
     }
@@ -52,49 +52,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            Log.i("INFO", "pre-execute");
         }
 
         protected Void doInBackground(String... apiValues) {
-            RequestBuilder req = new RequestBuilder();
 
-            try {
-                //Prepare for API request
+            //Get user inputted addresses
+            String origin = apiValues[0];
+            String destination = apiValues[1];
 
-                //URL
-                String API_URL = "http://www.mapquestapi.com/geocoding/v1/address";
+           Map<Double, Double> originCoordinates = Geolocation.getGeolocation(origin);
+           Map<Double, Double> destinationCoordinates = Geolocation.getGeolocation(destination);
 
-                //Params
-                String key = "augaAA25cxYUzzXABtyHXE7ddADGNq1F";
-                String location = "260 Wiltshire Road Wynnewood PA 19096";
-                Map<String, String> params = new HashMap<>();
-                params.put("key", key);
-                params.put("location", location);
+           //At this point, you should have the number of passengers, and the lat/long coordinates of both the origin and destination locations
 
-                //Request method
-                String requestMethod = "GET";
-
-                //Headers
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Postman-Token", "37038645-fa36-416d-91ec-780712b3a9dc");
-                headers.put("cache-control", "no-cache");
-
-                //Make Request
-                HttpURLConnection urlConnection = req.makeRequest(requestMethod, API_URL, headers, params);
-
-                //Get response
-                String fullResponse = ResponseBuilder.getFullResponse(urlConnection);
-                Log.i("INFO", "responsehere: " + fullResponse);
-
-                //Do something with response here
-
-                return null;
-            }
-            catch (Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-
+            return null;
         }
 
         protected void onPostExecute(String response) {

@@ -1,7 +1,5 @@
 package com.mador96.voom;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +22,7 @@ public class ResponseBuilder {
         }
         StringBuilder fullResponse = new StringBuilder();
         fullResponse.append(content);
-        
+
         in.close();
         urlConnection.disconnect();
         return fullResponse.toString();

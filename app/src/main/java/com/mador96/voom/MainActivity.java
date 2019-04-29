@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.loopj.android.http.RequestParams;
@@ -14,6 +15,7 @@ import com.loopj.android.http.RequestParams;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, passengerAmount);
         passengerDropdown.setAdapter(adapter);
 
+        //testing purposes
+        EditText test = (EditText) findViewById(R.id.originEditText);
+
         Button queryButton = (Button) findViewById(R.id.findRideButton);
         queryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,53 +56,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(String... apiValues) {
-
-            //String API_URL = apiValues[0];
-            //String key = apiValues[1];
-            //String location = apiValues[2];
-
-            Log.i("INFO", "I did something at all");
-
-            String API_URL = "http://www.mapquestapi.com/geocoding/v1/address";
-            String key = "augaAA25cxYUzzXABtyHXE7ddADGNq1F";
-            String location = "260 Wiltshire Road Wynnewood PA 19096";
+            RequestBuilder req = new RequestBuilder();
 
             try {
-                URL url = new URL(API_URL);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                //Prepare for API request
 
-                urlConnection.setRequestMethod("GET");
+                //URL
+                String API_URL = "http://www.mapquestapi.com/geocoding/v1/address";
 
-                //headers
-                urlConnection.setRequestProperty("Postman-Token", "37038645-fa36-416d-91ec-780712b3a9dc");
-                urlConnection.setRequestProperty("cache-control", "no-cache");
-
-                //params
+                //Params
+                String key = "augaAA25cxYUzzXABtyHXE7ddADGNq1F";
+                String location = "260 Wiltshire Road Wynnewood PA 19096";
                 Map<String, String> params = new HashMap<>();
                 params.put("key", key);
                 params.put("location", location);
-                urlConnection.setDoOutput(true);
-                DataOutputStream out = new DataOutputStream(urlConnection.getOutputStream());
-                out.writeBytes(ParameterStringBuilder.getParamsString(params));
-                out.flush();
-                out.close();
 
+                //Request method
+                String requestMethod = "GET";
 
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
-                    }
-                    bufferedReader.close();
-                    //return stringBuilder.toString();
-                } finally {
-                    urlConnection.disconnect();
-                    Log.i("INFO", "API call was successful");
-                }
+                //Headers
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Postman-Token", "37038645-fa36-416d-91ec-780712b3a9dc");
+                headers.put("cache-control", "no-cache");
+
+                //Make Request
+                HttpURLConnection urlConnection = req.makeRequest(requestMethod, API_URL, headers, params);
+
+                //Get response
+                String fullResponse = ResponseBuilder.getFullResponse(urlConnection);
+                Log.i("INFO", "responsehere: " + fullResponse);
+
+                //Do something with response here
+
                 return null;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
                 return null;
             }
@@ -107,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             if (response == null) {
                 response = "THERE WAS AN ERROR";
+                Log.e("ERROR", response);
+
             }
-            Log.i("INFO", response);
             //do something here with response
         }
     }

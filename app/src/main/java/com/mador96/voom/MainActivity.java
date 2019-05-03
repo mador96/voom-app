@@ -1,10 +1,12 @@
 package com.mador96.voom;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Dropdown for # of passengers
-        Spinner passengerDropdown = findViewById(R.id.passengerNum);
+        final Spinner passengerDropdown = findViewById(R.id.passengerNum);
         String[] passengerAmount = new String[]{"1", "2", "3", "4"}; //need more than 4?
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, passengerAmount);
         passengerDropdown.setAdapter(adapter);
@@ -38,12 +40,17 @@ public class MainActivity extends AppCompatActivity {
                 EditText destinationEditText = (EditText) findViewById(R.id.destinationEditText);
                 String origin = originEditText.getText().toString();
                 String destination = destinationEditText.getText().toString();
+                String pass = passengerDropdown.getSelectedItem().toString();
+
 
                 final String[] addresses = new String[2];
                 addresses[0] = origin;
                 addresses[1] = destination;
 
                 new RetrieveFeedTask().execute(addresses);
+
+                //go to next activity
+                openTransportOptions();
             }
         });
     }
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
            //At this point, you should have the number of passengers, and the lat/long coordinates of both the origin and destination locations
 
+            //now call next API
             return null;
         }
 
@@ -74,7 +82,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ERROR", response);
 
             }
-            //do something here with response
         }
+    }
+
+    public void openTransportOptions() {
+        Intent intent = new Intent(this, TransportOptions.class);
+        //intent.putExtra("someth");
+        startActivity(intent);
     }
 }

@@ -5,6 +5,10 @@ import android.util.Log;
 import com.mador96.voom.RequestBuilder;
 import com.mador96.voom.ResponseBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,22 +44,31 @@ public class Geolocation {
 
             //Get response
             String fullResponse = ResponseBuilder.getFullResponse(urlConnection);
-            Log.i("INFO", "responsehere: " + fullResponse); //remove this
 
             Map<Double, Double> coordinates = new HashMap<>();
-            getCoordinates(fullResponse);
+            coordinates = getCoordinates(fullResponse);
 
             return coordinates;
+
         } catch (Exception e) {
             Log.e("ERROR", e.getMessage(), e);
             return null;
         }
     }
 
-    public static Map<Double, Double> getCoordinates(String response) {
+    public static Map<Double, Double> getCoordinates(String response) throws JSONException {
         Map<Double, Double> locationCoordinates = new HashMap<>();
 
         //extract lat/long from response and return
+        JSONObject root = new JSONObject(response);
+        JSONArray resultsArray = root.getJSONArray("results");
+        JSONObject resultsObj = resultsArray.getJSONObject(0);
+        JSONArray locationsArray = resultsObj.getJSONArray("locations");
+        JSONObject locationsObj = locationsArray.getJSONObject(0);
+        JSONObject latLngObj = locationsObj.getJSONObject("latLng");
+        double lat = latLngObj.getDouble("lat");
+        double lng = latLngObj.getDouble("lng");
+        locationCoordinates.put(lat, lng);
 
         return locationCoordinates;
     }

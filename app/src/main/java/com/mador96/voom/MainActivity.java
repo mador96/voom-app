@@ -18,6 +18,10 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
+    public String origin;
+    public String destination;
+    public Map<Double, Double> originCoordinates;
+    public Map<Double, Double> destinationCoordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,44 +54,53 @@ public class MainActivity extends AppCompatActivity {
                 new RetrieveFeedTask().execute(addresses);
 
                 //go to next activity
-                openTransportOptions();
+                //openTransportOptions();
+                //openTransportOptions(originCoordinates, destinationCoordinates, origin, destination);
             }
         });
     }
 
-    class RetrieveFeedTask extends AsyncTask<String, Void, Void> {
+    class RetrieveFeedTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
         }
 
-        protected Void doInBackground(String... apiValues) {
+        protected String doInBackground(String... apiValues) {
 
             //Get user inputted addresses
-            String origin = apiValues[0];
-            String destination = apiValues[1];
+            origin = apiValues[0];
+            destination = apiValues[1];
 
-           Map<Double, Double> originCoordinates = Geolocation.getGeolocation(origin);
-           Map<Double, Double> destinationCoordinates = Geolocation.getGeolocation(destination);
+            originCoordinates = Geolocation.getGeolocation(origin);
+            destinationCoordinates = Geolocation.getGeolocation(destination);
 
            //At this point, you should have the number of passengers, and the lat/long coordinates of both the origin and destination locations
-
-            //now call next API
             return null;
         }
 
         protected void onPostExecute(String response) {
-            if (response == null) {
-                response = "THERE WAS AN ERROR";
-                Log.e("ERROR", response);
-
-            }
+            openTransportOptions();
         }
     }
 
     public void openTransportOptions() {
+
+        Map.Entry<Double, Double> originEntry = originCoordinates.entrySet().iterator().next();
+        Double originLat = originEntry.getKey();
+        Double originLng = originEntry.getValue();
+
+        Map.Entry<Double, Double> destinationEntry = destinationCoordinates.entrySet().iterator().next();
+        Double destLat = destinationEntry.getKey();
+        Double destLng = destinationEntry.getValue();
+
         Intent intent = new Intent(this, TransportOptions.class);
-        //intent.putExtra("someth");
+        intent.putExtra("ORIGIN", origin);
+        intent.putExtra("DESTINATION", destination);
+        intent.putExtra("O_LAT", originLat);
+        intent.putExtra("O_LNG", originLng);
+        intent.putExtra("D_LAT", destLat);
+        intent.putExtra("D_LNG", destLng);
         startActivity(intent);
     }
 }

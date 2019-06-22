@@ -18,6 +18,7 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
+    public String pass;
     public String origin;
     public String destination;
     public Map<Double, Double> originCoordinates;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 EditText destinationEditText = (EditText) findViewById(R.id.destinationEditText);
                 String origin = originEditText.getText().toString();
                 String destination = destinationEditText.getText().toString();
-                String pass = passengerDropdown.getSelectedItem().toString();
+                pass = passengerDropdown.getSelectedItem().toString();
 
 
                 final String[] addresses = new String[2];
@@ -52,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 addresses[1] = destination;
 
                 new RetrieveFeedTask().execute(addresses);
-
-                //go to next activity
-                //openTransportOptions();
-                //openTransportOptions(originCoordinates, destinationCoordinates, origin, destination);
             }
         });
     }
@@ -101,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("O_LNG", originLng);
         intent.putExtra("D_LAT", destLat);
         intent.putExtra("D_LNG", destLng);
+        intent.putExtra("PASSENGERS", pass);
         startActivity(intent);
     }
 }

@@ -46,7 +46,7 @@ public class ServiceListAdapter extends ArrayAdapter {
         //Dropdown for categories ----- FINISH!!!
         final Spinner categoryDropdown = rowView.findViewById(R.id.category);
         String[] categoryTypes = new String[]{"1", "2", "3", "4"}; //need more than 4?
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categoryTypes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_dropdown_item, categoryTypes);
         categoryDropdown.setAdapter(adapter);
 
         //set the values of the texts to values from the arrays

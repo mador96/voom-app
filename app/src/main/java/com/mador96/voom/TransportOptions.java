@@ -23,14 +23,23 @@ public class TransportOptions extends AppCompatActivity {
         TextView originText = (TextView)findViewById(R.id.originTextView);
         TextView destText = (TextView)findViewById(R.id.destTextView);
 
-        //Strip out only first part of address???
+        //Make API calls here to get info needed for list to show end user
 
+        //Then populate the arrays below with appropriate info
+        String[] companyArray = {"Uber", "Lyft", "Via", "etc"};
+        String[] categoryArray = {"one", "two", "three", "four"};
+        String[] priceArray = {"$1.00", "$2.00", "$3.00", "$4.00"};
+
+
+
+        //How to strip out only first part of address???
         originText.setText(theOrigin);
         destText.setText(theDestination);
 
         //Initialize list for prices
-
+        ServiceListAdapter services = new ServiceListAdapter(this, companyArray, categoryArray, priceArray);
         ListView listView = (ListView)findViewById(R.id.list);
+        listView.setAdapter(services);
     }
 
 }
